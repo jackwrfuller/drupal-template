@@ -1,0 +1,39 @@
+services:
+  drupal:
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    container_name: drupal
+    ports:
+      - "8080:80"
+    volumes:
+      - /root/.composer
+      - /var/www/html/sites
+      - ./themes/custom/jwrf:/app/web/themes/custom/jwrf
+    depends_on:
+      - db
+
+  db:
+    image: mariadb:latest
+    container_name: mariadb
+    environment:
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASS}
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASS}
+    volumes:
+      - db_data:/var/lib/mysql
+
+  phpmyadmin:
+    image: phpmyadmin:latest
+    container_name: phpmyadmin
+    ports:
+      - "8081:80"
+    environment:
+      PMA_HOST: db
+      PMA_USER: root
+      PMA_PASSWORD: rootpassword
+
+volumes:
+  db_data:
+
